@@ -5,7 +5,6 @@ This series of notebooks is an attempt to explore and demonstrate how modern att
 ## Requirements
 The labs require:
 - [Hyper-V](https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/quick-start/enable-hyper-v)
-- [RSAT: Active Directory Domain Services and Lightweight Directory Services Tools](https://www.microsoft.com/en-gb/download/details.aspx?id=45520)
 - [Automatedlab](https://automatedlab.org/en/latest/)
 - Windows Server ISOs
 
