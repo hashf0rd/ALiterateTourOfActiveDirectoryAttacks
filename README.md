@@ -10,8 +10,7 @@ The labs require:
 - Windows Server ISOs
 
 While the notebooks require:
-- A Juypter notebook server
-- The [.Net interactive kernel](https://github.com/dotnet/interactive)
+- A Juypter notebook server and the [.Net interactive kernel](https://github.com/dotnet/interactive)
 - Alternatively, VSCode and the [Polyglot Notebook extension](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.dotnet-interactive-vscode) __(Recommended)__
 
 ## Starting a Lab
@@ -29,6 +28,8 @@ Coming back to the lab later: `Import-Lab <labname>` and `Start-LavVM <vm name>`
 If you need to check the configuration on the lab machine for any reason, you can do this by running `Enter-PSLabSession <vm name>` from an admin console.
 
 __Note:__ The lab scripts set up the lab machine as a DNS server for the virtualised network. You may find this causes a slight delay in your regular internet browsing. When not using the lab, disable the virtual network adapter with `Enable-NetAdapter vEther*`, and enable it again when you bring the lab machine back up: `Disable-NetAdapter vEther*`.
+
+Alternatively, look for the vEther* virtual interfaces using `Get-NetIPInterface` and change the interface priority so its lower than the interface you use for web browsing with `Set-NetIPInterface vEther* -InterfaceMetric 45` (if for example, the output of `Get-NetIPInterface` showed your primary interface as having an interfacemetric of 35).
 
 ## Labs
 1. [ACL Abuse](./1.%20ACL%20Abuse)
