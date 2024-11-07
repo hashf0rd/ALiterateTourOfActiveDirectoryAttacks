@@ -22,7 +22,7 @@ The attacker gains initial access to the network and discovers John's account ha
 
 After the attacker compromises John's account, recon shows that John is part of the Office Admins group.
 
-Mmebers of the "Office Admins" group have WriteProprty over "DevOps Admins", so John is able to add himself to that group.
+Mmebers of the "Office Admins" group have WriteProperty over "DevOps Admins", so John is able to add himself to that group.
 
 As a member of "DevOps Admins", John has WriteDACL permissions on the "IT Admins" group.
 
