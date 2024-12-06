@@ -3,15 +3,28 @@ $domainName = 'aclabuse.lab'
 New-ADOrganizationalUnit -Name "EnterpriseUsers" -Path "DC=aclabuse,DC=lab"
 
 New-ADUser -Name 'John Dee' `
-    -GivenName 'Jane' -Surname 'Dee' `
+    -GivenName 'John' -Surname 'Dee' `
     -SamAccountName 'john.dee' `
     -UserPrincipalName ('John.Dee@' + $domainName) `
     -AccountPassword (ConvertTo-SecureString 'johnsPass01' -AsPlainText -Force) `
     -Path "OU=EnterpriseUsers,DC=aclabuse,DC=lab" -PassThru | Enable-ADAccount
 
+    New-ADUser -Name 'Jane Doe' `
+    -GivenName 'Jane' -Surname 'Doe' `
+    -SamAccountName 'jane.doe' `
+    -UserPrincipalName ('Jane.Doe@' + $domainName) `
+    -AccountPassword (ConvertTo-SecureString 'janesPass01' -AsPlainText -Force) `
+    -Path "OU=Users,DC=aclabuse,DC=lab" -PassThru | Enable-ADAccount
+
 foreach ($group in  @('Office Admins','IT Admins','DevOps Admins')) {
     New-ADGroup -Name $group -GroupScope Global -Path 'OU=EnterpriseUsers,DC=aclabuse,DC=lab'
 }
+
+New-ADGroup -Name 'SOC' -GroupScope Global
+
+Add-ADGroupMember -Identity 'Domain Admins' -Members 'SOC'
+
+Add-ADGroupMember -Identity 'SOC' -Members 'jane.doe'
 
 Add-ADGroupMember -Identity 'Office Admins' -Members 'john.dee'
 
@@ -32,7 +45,9 @@ Using the newly acquired GenericWrite permissions on "IT Admins", the attacker a
 
 The "IT Admins" group has GenericAll permissions on the "AdminSDHolder" object - the template for admin accounts.
 
-Using the GenericAll permissions, the attack makes John a domain admin.
+Using the GenericAll permissions, the attacker makes John a domain admin.
+
+As a final step, the attacker creates a backdoor account that is invisible to the SOC group.
 
 #>
 
@@ -48,7 +63,7 @@ $ace = New-Object System.DirectoryServices.ActiveDirectoryAccessRule(
 $targetACL.SetAccessRule($ace)
 Set-Acl -AclObject $targetACL -Path $targetDN
 
-# DevOps Admins has WriteDACL on IT Admins
+# DevOps Admins has WriteDACL, and ReadControl on IT Admins
 $targetDN =  "AD:$(Get-ADGroup -Identity 'IT Admins')"
 $targetACL = Get-ACL -Path $targetDN
 $groupSID = (Get-ADGroup -Identity 'DevOps Admins').SID
@@ -60,7 +75,15 @@ $ace = New-Object System.DirectoryServices.ActiveDirectoryAccessRule(
 $targetACL.SetAccessRule($ace)
 Set-Acl -AclObject $targetACL -Path $targetDN
 
-# GenericAll
+$ace = New-Object System.DirectoryServices.ActiveDirectoryAccessRule(
+    $groupSID,
+    [System.DirectoryServices.ActiveDirectoryRights]::ReadControl,
+    [System.Security.AccessControl.AccessControlType]::Allow
+    )
+$targetACL.AddAccessRule($ace)
+Set-Acl -AclObject $targetACL -Path $targetDN
+
+# IT Admins has GenericAll on AdminSDHolder
 $targetDN =  "AD:CN=AdminSDHolder,CN=System,DC=aclabuse,DC=lab"
 $targetACL = Get-ACL -Path $targetDN
 $groupSID = (Get-ADGroup -Identity 'IT Admins').SID
