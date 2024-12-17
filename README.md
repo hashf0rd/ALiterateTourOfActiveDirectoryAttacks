@@ -9,7 +9,8 @@ The labs require:
 
 While the notebooks require:
 - A Juypter notebook server and the [.Net interactive kernel](https://github.com/dotnet/interactive)
-- Alternatively, VSCode and the [Polyglot Notebook extension](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.dotnet-interactive-vscode) __(Recommended)__
+- A Juypter notebook frontend such as Juypterlab
+- The specific frontend used to develop these labs was VSCode with the [Polyglot Notebook extension](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.dotnet-interactive-vscode)
 
 ## Virtualisation Options
 If you wish to use a different hypervisor to Hyper-v, the lab configuration scripts for the most part work standalone - simply build your virtual environment 
