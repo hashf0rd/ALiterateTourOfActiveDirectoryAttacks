@@ -1,6 +1,8 @@
 $domainName = 'aclabuse.lab'
 
 New-ADOrganizationalUnit -Name "EnterpriseUsers" -Path "DC=aclabuse,DC=lab"
+New-ADOrganizationalUnit -Name "SecurityUsers" -Path "DC=aclabuse,DC=lab"
+
 
 New-ADUser -Name 'John Dee' `
     -GivenName 'John' -Surname 'Dee' `
@@ -9,12 +11,12 @@ New-ADUser -Name 'John Dee' `
     -AccountPassword (ConvertTo-SecureString 'johnsPass01' -AsPlainText -Force) `
     -Path "OU=EnterpriseUsers,DC=aclabuse,DC=lab" -PassThru | Enable-ADAccount
 
-    New-ADUser -Name 'Jane Doe' `
+New-ADUser -Name 'Jane Doe' `
     -GivenName 'Jane' -Surname 'Doe' `
     -SamAccountName 'jane.doe' `
     -UserPrincipalName ('Jane.Doe@' + $domainName) `
     -AccountPassword (ConvertTo-SecureString 'janesPass01' -AsPlainText -Force) `
-    -Path "OU=Users,DC=aclabuse,DC=lab" -PassThru | Enable-ADAccount
+    -Path "OU=SecurityUsers,DC=aclabuse,DC=lab" -PassThru | Enable-ADAccount
 
 foreach ($group in  @('Office Admins','IT Admins','DevOps Admins')) {
     New-ADGroup -Name $group -GroupScope Global -Path 'OU=EnterpriseUsers,DC=aclabuse,DC=lab'
