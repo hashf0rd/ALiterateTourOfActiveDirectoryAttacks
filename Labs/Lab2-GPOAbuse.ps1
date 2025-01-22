@@ -3,10 +3,14 @@ $labName = 'GPOAbuse'
 $domainName = 'gpoabuse.lab'
 $admin = 'gpoAdmin'
 $adminPass = 'gpoPass01'
-$machineName = 'DC01'
-$machineAddress = '192.168.6.10'
-# Change the labISO variable to match the ISO you have available
-$labISO = 'Windows Server 2019 Standard (Desktop Experience)'
+$machineNameDC = 'DC01'
+$machineAddressDC = '192.168.6.10'
+$machineNameWS = 'WS01'
+$machineAddressWS = '192.168.6.88'
+
+# Change the labISO_X variables to match the ISOs you have available
+$labISO_DC = 'Windows Server 2019 Standard (Desktop Experience)'
+$labISO_WS = 'Windows 11 Pro'
 
 # Lab defintion
 New-LabDefinition `
@@ -31,21 +35,36 @@ Add-LabDomainDefinition `
 
 # The lab configuration script is defined here as a post install activity
 $scriptPath = Join-Path $PSScriptRoot '.\Lab-Configuration'
-$labConfig = Get-LabInstallationActivity -ScriptFileName 'GPOAbuse.ps1' -DependencyFolder $scriptPath
+$labConfigDC = Get-LabInstallationActivity -ScriptFileName 'GPOAbuse-DC01.ps1' -DependencyFolder $scriptPath
+$labConfigWS = Get-LabInstallationActivity -ScriptFileName 'GPOAbuse-WS01.ps1' -DependencyFolder $scriptPath
 
 # Definition for DC01
 Add-LabMachineDefinition `
-    -Name $machineName `
+    -Name $machineNameDC `
     -MinMemory 512MB `
     -Memory 1GB `
     -MaxMemory 2GB `
     -Network $labName `
-    -IpAddress $machineAddress `
-    -DnsServer1 $machineAddress `
+    -IpAddress $machineAddressDC `
+    -DnsServer1 $machineAddressDC `
     -DomainName $domainName `
     -Roles RootDC `
-    -OperatingSystem $labISO `
-    -PostInstallationActivity $labConfig
+    -OperatingSystem $labISO_DC `
+    -PostInstallationActivity $labConfigDC
+
+# Definition for WS01
+# Make sure the DnsServer is set to DC01's IP Address
+Add-LabMachineDefinition `
+    -Name $machineNameWS `
+    -MinMemory 512MB `
+    -Memory 1GB `
+    -MaxMemory 2GB `
+    -Network $labName `
+    -IpAddress $machineAddressWS `
+    -DnsServer1 $machineAddressDC `
+    -DomainName $domainName `
+    -OperatingSystem $labISO_WS `
+    -PostInstallationActivity $labConfigWS
 
 # Install lab & report
 Install-Lab
@@ -53,6 +72,6 @@ Show-LabDeploymentSummary -Detailed
 
 # Set up the vEthernet interface on the host to use the newly created DC as its DNS server
 $index = (Get-NetAdapter | Where-Object Name -Match $labName).ifIndex
-Set-DnsClientServerAddress -InterfaceIndex $index -ServerAddresses $machineAddress
+Set-DnsClientServerAddress -InterfaceIndex $index -ServerAddresses $machineAddressDC
 Write-Host "Host vEthernet interface configured..."
 Get-NetIPConfiguration -InterfaceIndex $index

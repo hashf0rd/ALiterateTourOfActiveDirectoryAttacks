@@ -16,7 +16,7 @@ While the notebooks require:
 If you wish to use a different hypervisor to Hyper-v, the lab configuration scripts for the most part work standalone - simply build your virtual environment 
 
 ## Starting a Lab
-The scripts that build each lab utilise [Automatedlab](https://automatedlab.org/en/latest/). The scripts that configure each lab are based off of the [excellent work by Safebuffer](https://github.com/safebuffer/vulnerable-AD). 
+The scripts that build each lab utilise [Automatedlab](https://automatedlab.org/en/latest/). The scripts that configure each lab are based off of the [excellent work by Safebuffer](https://github.com/safebuffer/vulnerable-AD) and the [Orange Cyberdefense team](https://github.com/Orange-Cyberdefense/GOAD/tree/main/ad/GOAD/scripts). 
 
 The scripts to build each lab are stored in the `Labs` folder and are individually named `Lab<chapter number>-<lab name>.ps1`, with each script then calling a corresponding configuration script stored in the `Labs\Lab-Configuration` folder. Calling the appropriate `Lab<chapter number>-<lab name>.ps1` script should be all that is required to set up each lab.
 
@@ -54,12 +54,11 @@ Alternatively, look for the vEther* virtual interfaces using `Get-NetIPInterface
 18. [Pass the Ticket]()
 19. [Overpass the Hash]()
 20. [Pass the Key]()
-21. [Pass the Cache (for linux)]()
-22. [UNPac the Hash]()
-23. [Encryption Downgrade]()
-24. [Skeleton Key]()
-25. [SAMAccountName Spoofing]()
-26. [SPN Jacking]()
-27. [Ticket Creation with SID History]()
-28. [Shadow Credentials]()
-29. [PrimaryGroupID Attack]()
+21. [UNPac the Hash]()
+22. [Encryption Downgrade]()
+23. [Skeleton Key]()
+24. [SAMAccountName Spoofing]()
+25. [SPN Jacking]()
+26. [Ticket Creation with SID History]()
+27. [Shadow Credentials]()
+28. [PrimaryGroupID Attack]()
