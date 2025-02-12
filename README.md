@@ -29,7 +29,7 @@ Coming back to the lab later: `Import-Lab <labname>` and `Start-LavVM <vm name>`
 
 If you need to check the configuration on the lab machine for any reason, you can do this by running `Enter-PSLabSession <vm name>` from an admin console.
 
-__Note:__ The lab scripts set up the lab machine as a DNS server for the virtualised network. You may find this causes a slight delay in your regular internet browsing. When not using the lab, disable the virtual network adapter with `Enable-NetAdapter vEther*`, and enable it again when you bring the lab machine back up: `Disable-NetAdapter vEther*`.
+__Note:__ The lab scripts set up the lab machine as a DNS server for the virtualised network. You may find this causes a slight delay in your regular internet browsing. When not using the lab, disable the virtual network adapter with `Enable-NetAdapter vEther*`, and enable it again when you bring the lab machine back up: `Disable-NetAdapter vEther*`. Alternatively, a simpler solution is to set a custom DNS provider in your browsers DNS-over-HTTPS settings.
 
 Alternatively, look for the vEther* virtual interfaces using `Get-NetIPInterface` and change the interface priority so its lower than the interface you use for web browsing with `Set-NetIPInterface vEther* -InterfaceMetric 45` (if for example, the output of `Get-NetIPInterface` showed your primary interface as having an interfacemetric of 35).
 

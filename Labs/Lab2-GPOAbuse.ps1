@@ -7,6 +7,7 @@ $machineNameDC = 'DC01'
 $machineAddressDC = '192.168.6.10'
 $machineNameWS = 'WS01'
 $machineAddressWS = '192.168.6.88'
+$ou = "OU=EnterpriseUsersAndComputers,DC=gpoabuse,DC=lab"
 
 # Change the labISO_X variables to match the ISOs you have available
 $labISO_DC = 'Windows Server 2019 Standard (Desktop Experience)'
@@ -36,7 +37,7 @@ Add-LabDomainDefinition `
 # The lab configuration script is defined here as a post install activity
 $scriptPath = Join-Path $PSScriptRoot '.\Lab-Configuration'
 $labConfigDC = Get-LabInstallationActivity -ScriptFileName 'GPOAbuse-DC01.ps1' -DependencyFolder $scriptPath
-$labConfigWS = Get-LabInstallationActivity -ScriptFileName 'GPOAbuse-WS01.ps1' -DependencyFolder $scriptPath
+#$labConfigWS = Get-LabInstallationActivity -ScriptFileName 'GPOAbuse-WS01.ps1' -DependencyFolder $scriptPath
 
 # Definition for DC01
 Add-LabMachineDefinition `
@@ -67,7 +68,7 @@ Add-LabMachineDefinition `
     -PostInstallationActivity $labConfigWS
 
 # Install lab & report
-Install-Lab
+Install-Lab 
 Show-LabDeploymentSummary -Detailed 
 
 # Set up the vEthernet interface on the host to use the newly created DC as its DNS server
@@ -75,3 +76,10 @@ $index = (Get-NetAdapter | Where-Object Name -Match $labName).ifIndex
 Set-DnsClientServerAddress -InterfaceIndex $index -ServerAddresses $machineAddressDC
 Write-Host "Host vEthernet interface configured..."
 Get-NetIPConfiguration -InterfaceIndex $index
+
+# Move WS01 into the proper OU, there is probably a better way to do this...
+Invoke-LabCommand `
+    -ComputerName $machineNameDC `
+    -ScriptBlock { 
+        Get-ADComputer -Identity $machineNameWS | Move-ADObject -TargetPath $ou 
+    } -Variable (Get-Variable -Name machineNameWS),(Get-Variable  -Name ou)
